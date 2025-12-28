@@ -4,13 +4,20 @@ import ConfettiPortal from '@components/ConfettiPortal.jsx';
 import Hero from '@components/Hero.jsx';
 import SectionBar from '@components/SectionBar.jsx';
 import Footer from '@components/Footer.jsx';
-import { footerContent, heroContent, sectionItems, headerProfileIcon } from '@data/mockData.js';
+import { heroContent, sectionItems, headerProfileIcon } from '@data/mockData.js';
 import styles from '@styles/profile.module.css';
 
 export default function Profile() {
   const [openSection, setOpenSection] = useState(null);
   const [rulebookOpen, setRulebookOpen] = useState(false);
   const [showSusDialog, setShowSusDialog] = useState(true);
+  const [isSignedUp, setIsSignedUp] = useState(false);
+  const [showSignupModal, setShowSignupModal] = useState(false);
+  const [signupForm, setSignupForm] = useState({
+    name: '',
+    email: '',
+    phone: ''
+  });
   const [selectedBadge, setSelectedBadge] = useState(null);
   const [savedEntries, setSavedEntries] = useState({});
   const [categoryText, setCategoryText] = useState('');
@@ -24,6 +31,56 @@ export default function Profile() {
   const treeIcon = new URL('../../assets/Plede-a-thon campaign page/tree-level.jpeg', import.meta.url);
   // unlocked range state (10, 20, 30) - persist to localStorage
   const [maxUnlocked, setMaxUnlocked] = useState(10);
+
+  // About panel: placeholder icon + 6 items (edit titles and content below in `aboutItems`)
+  const aboutPlaceholder = new URL('../../assets/about-placeholder.svg', import.meta.url).href;
+  const circleImages = [
+    new URL('../../assets/Plede-a-thon campaign page/circle images/circle1.jpg', import.meta.url).href,
+    new URL('../../assets/Plede-a-thon campaign page/circle images/circle2.jpeg', import.meta.url).href,
+    new URL('../../assets/Plede-a-thon campaign page/circle images/circle3.jpg', import.meta.url).href
+  ];
+  const aboutItems = [
+    {
+      id: 0,
+      title: 'So… what is sustainability?',
+      shortLabel: 'What is sustainability?',
+      /* Edit the popup content below if you want to change the first item's heading/content */
+      content: `Sustainability isn’t about doing the most. It’s about doing what makes sense for you, and for what you share with the world. At its simplest, sustainability means not overusing what you don’t actually need. Time. Energy. Money. Resources. Space. And once you start seeing it that way, it stops feeling like awareness.`
+    },
+    {
+      id: 1,
+      title: "Sustainability isn’t big. It’s intentional.",
+      shortLabel: 'Intentional',
+      content: `We’ve been taught that sustainable actions have to be dramatic or inconvenient. But most of the time, they’re quiet. They show up when you choose something you’ll actually use. When you stop buying duplicates. When you slow down a habit that feels wasteful or unnecessary. Sustainability isn’t about giving things up. It’s about choosing things that stay.`
+    },
+    {
+      id: 2,
+      title: 'It starts with noticing',
+      shortLabel: 'Noticing',
+      content: `Almost every sustainable action begins with a moment like: “Why do I keep doing this?” Why do I throw this away so often? Why do I keep buying this but never finishing it? Why does this part of my routine feel messy or out of control? That moment of noticing is already enough. The action that follows doesn’t have to be perfect, it just has to be honest.`
+    },
+    {
+      id: 3,
+      title: 'The quiet win',
+      shortLabel: 'Quiet win',
+      content: `Sustainable choices often come with immediate wins. You stop losing things because your space makes sense. You save money because you’re buying less but better. You feel lighter because your routine isn’t working against you. Even something as small as keeping one reusable bottle you actually like using, that’s sustainability working with you, not against you.`
+    },
+    {
+      id: 4,
+      title: 'Questions instead of instructions',
+      shortLabel: 'Questions',
+      content: `Not everything needs a checklist. Sometimes the most useful thing is a question you keep coming back to: What do I waste without realizing it? What do I use once and forget about? What feels unnecessarily heavy in my routine? What do I keep buying but never finishing?`
+    },
+    {
+      id: 5,
+      title: 'One last thing',
+      shortLabel: 'One last thing',
+      content: `You don’t need to change everything. You just need to notice one thing and respond to it. That’s enough to begin. And that’s how sustainable actions actually last.`
+    }
+  ];
+
+  const [aboutActive, setAboutActive] = useState(0);
+  const [showAboutModal, setShowAboutModal] = useState(false);
 
   // Check animation badge id (short-lived) and confetti controls
   const [animatedCheck, setAnimatedCheck] = useState(null);
@@ -45,6 +102,11 @@ export default function Profile() {
     try {
       const stored = localStorage.getItem('maxUnlocked');
       if (stored) setMaxUnlocked(Number(stored));
+      const signedUp = localStorage.getItem('isSignedUp');
+      if (signedUp === 'true') {
+        setIsSignedUp(true);
+        setShowSusDialog(false);
+      }
     } catch (e) {}
   }, []);
 
@@ -71,10 +133,10 @@ export default function Profile() {
   );
 
   useEffect(() => {
-    if (openSection === 'sustainability') {
+    if (openSection === 'sustainability' && !isSignedUp) {
       setShowSusDialog(true);
     }
-  }, [openSection]);
+  }, [openSection, isSignedUp]);
 
   useEffect(() => {
     if (selectedBadge) {
@@ -367,14 +429,23 @@ export default function Profile() {
     <div className={styles.page}>
       <div className={styles.backgroundLayer} />
       <div className={styles.puzzleOverlay} />
-      <div className={styles.pinkOverlay} />
+      <div className={styles.pinkOverlay}>
+        <img 
+          src={new URL('../../assets/Plede-a-thon campaign page/simple-leaves.png', import.meta.url).href}
+          alt=""
+          className={styles.pinkOverlayLeaves}
+        />
+      </div>
       <div className={styles.content}>
         <Hero
           title={heroContent.title}
           headerLeft={heroContent.headerLeft}
           headerRight={heroContent.headerRight}
-          profileIcon={headerProfileIcon}
+          logoIcon={new URL('../../assets/Plede-a-thon campaign page/logo.png', import.meta.url).href}
+          profileIcon={isSignedUp ? headerProfileIcon : new URL('../../assets/Plede-a-thon campaign page/btn_06-signup.png', import.meta.url).href}
           onProfileToggle={toggleSection}
+          onSignupClick={() => setShowSignupModal(true)}
+          isSignedUp={isSignedUp}
         />
         <style>{`.topBar { padding: 16px 36px; } @media (max-width: 720px) { .headerProfileImg { width: 40px; height: 40px } .headerProfileBtn { width: 48px; height: 48px }`}</style>
         <div className={styles.sections}>
@@ -391,41 +462,76 @@ export default function Profile() {
                 />
                 {item.id === 'profile' ? (
                   <div
+                    className={`${styles.susCard} ${isOpen ? styles.expandedCard : ''}`}
+                    aria-hidden={!isOpen}
+                  >
+                    <div
+                      className={`${styles.susBadgesWrapper} ${
+                        isOpen ? styles.panelOpen : ''
+                      }`}
+                    >
+                      <div className={styles.susBadgesScroll}>
+                        <div className={styles.aboutBadges}>
+                          {aboutItems.map((a) => {
+                            const circleImageIndex = a.id % circleImages.length;
+                            const circleImage = circleImages[circleImageIndex];
+                            return (
+                              <div key={a.id} className={styles.aboutBadgeWrapper}>
+                                <button
+                                  type="button"
+                                  className={`${styles.susBadge} ${styles.aboutBadge}`}
+                                  onClick={() => {
+                                    setAboutActive(a.id);
+                                    setShowAboutModal(true);
+                                  }}
+                                  aria-label={a.title}
+                                >
+                                  <span 
+                                    className={styles.susBadgeThumb}
+                                    style={{ backgroundImage: `url(${circleImage})` }}
+                                    aria-hidden="true"
+                                  />
+                                </button>
+                                <span className={styles.aboutBadgeLabel}>{a.shortLabel}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+                {item.id === 'how' ? (
+                  <div
                     className={`${styles.profileFormCard} ${
                       isOpen ? styles.expandedCard : ''
                     }`}
                     aria-hidden={!isOpen}
                   >
-                    <div className={styles.profileFormInner}>
-                      <div className={styles.formRow}>
-                        <label className={styles.formLabel}>Name:</label>
-                        <input className={styles.formInput} type="text" placeholder="" />
-                      </div>
-                      <div className={styles.formRow}>
-                        <label className={styles.formLabel}>Email:</label>
-                        <input className={styles.formInput} type="email" placeholder="" />
-                      </div>
-                      <div className={styles.formRow}>
-                        <label className={styles.formLabel}>Phone Number:</label>
-                        <input className={styles.formInput} type="tel" placeholder="" />
-                      </div>
-                      <div className={styles.formRow}>
-                        <label className={styles.formLabel}>*Input Label*</label>
-                        <input className={styles.formInput} type="text" placeholder="" />
-                      </div>
-                      <div className={styles.formActions}>
-                        <button className={styles.saveButton} type="button">
-                          Save
-                        </button>
-                      </div>
+                    <div className={styles.howItWorksContainer}>
+                      <img 
+                        src={new URL('../../assets/Plede-a-thon campaign page/How to register/top-part.jpg', import.meta.url).href}
+                        alt=""
+                        className={styles.howItWorksTopImage}
+                      />
+                      <img 
+                        src={new URL('../../assets/Plede-a-thon campaign page/How to register/bottom-part.jpg', import.meta.url).href}
+                        alt=""
+                        className={styles.howItWorksBottomImage}
+                      />
+                      {/* Text content will be added here later on top of images */}
                     </div>
                   </div>
                 ) : null}
+
                 {item.id === 'sustainability' ? (
                   <div
-                    className={`${styles.susCard} ${isOpen ? styles.expandedCard : ''}`}
+                    className={`${styles.susCard} ${isOpen ? styles.expandedCard : ''} ${showSusDialog && !isSignedUp ? styles.susCardWithOverlay : ''}`}
                     aria-hidden={!isOpen}
                   >
+                    {showSusDialog && !isSignedUp ? (
+                      <div className={styles.susRedOverlayFull} />
+                    ) : null}
                     <div className={styles.susProgress}>
                       <div className={styles.susProgressTrack}>
                         <div
@@ -486,6 +592,24 @@ export default function Profile() {
                         rulebookOpen ? styles.panelHidden : styles.panelOpen
                       }`}
                     >
+                      {/* Red overlay when signup dialog is active */}
+                      {showSusDialog && !isSignedUp ? (
+                        <>
+                          <div className={styles.susRedOverlay} />
+                          <div className={styles.susRedPanel}>
+                            <button
+                              type="button"
+                              className={styles.susRedPanelButton}
+                              onClick={() => {
+                                setShowSusDialog(false);
+                                setShowSignupModal(true);
+                              }}
+                            >
+                              Sign Up for the ReNew is the new NEW Challenge to Gain Access
+                            </button>
+                          </div>
+                        </>
+                      ) : null}
                       <div className={styles.susBadgesScroll}>
                         <div className={styles.susBadges}>
                           {sustainabilityBadges.map((badge) => {
@@ -555,39 +679,23 @@ export default function Profile() {
                         </div>
                       ) : null}
 
-                      {showSusDialog ? (
-                        <div
-                          className={styles.susSignupBackdrop}
-                          role="dialog"
-                          aria-hidden={false}
-                          onClick={() => setShowSusDialog(false)}
-                        >
-                          <div className={styles.susSignupPanel} onClick={(e) => e.stopPropagation()}>
+                      {/* Red overlay when signup dialog is active */}
+                      {showSusDialog && !isSignedUp ? (
+                        <>
+                          <div className={styles.susRedOverlay} />
+                          <div className={styles.susRedPanel}>
                             <button
                               type="button"
-                              className={styles.susSignupClose}
-                              onClick={() => setShowSusDialog(false)}
-                              aria-label="Close signup"
+                              className={styles.susRedPanelButton}
+                              onClick={() => {
+                                setShowSusDialog(false);
+                                setShowSignupModal(true);
+                              }}
                             >
-                              ×
+                              Sign Up for the ReNew is the new NEW Challenge to Gain Access
                             </button>
-                            <div className={styles.susSignupContent}>
-                              <div className={styles.susSignupInner}>
-                                <div className={styles.susSignupIcon} aria-hidden="true">🌱</div>
-                                <button
-                                  type="button"
-                                  className={styles.susSignupPill}
-                                  onClick={() => {
-                                    // placeholder action - hook in to actual signup flow
-                                    setShowSusDialog(false);
-                                  }}
-                                >
-                                  <span className={styles.susSignupText}>Sign Up for the ReNew is the new NEW Challenge to Gain Access</span>
-                                </button>
-                              </div>
-                            </div>
                           </div>
-                        </div>
+                        </>
                       ) : null}
                       <div className={styles.susFooterNote}>
                         Did you post yet? Make sure to tag building-u and post the link here!
@@ -599,6 +707,40 @@ export default function Profile() {
             );
           })}
         </div>
+        {/* About sustainability popup modal */}
+        {showAboutModal ? (
+          <div
+            className={styles.aboutPopupWrapper}
+            role="dialog"
+            aria-modal="true"
+            onClick={() => setShowAboutModal(false)}
+          >
+            <div className={styles.aboutPopupCard} onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                className={styles.aboutPopupClose}
+                onClick={() => setShowAboutModal(false)}
+                aria-label="Close"
+              >
+                ✕
+              </button>
+
+              <div className={styles.aboutPopupHeart}>❤</div>
+
+              <div className={styles.aboutPopupInner}>
+                <img 
+                  src={new URL('../../assets/Plede-a-thon campaign page/logo.png', import.meta.url).href}
+                  alt="Building-U Logo"
+                  className={styles.aboutPopupLogo}
+                />
+                <h3 className={styles.aboutPopupTitle}>{aboutItems.find(it => it.id === aboutActive)?.title}</h3>
+                <div className={styles.aboutPopupText}>
+                  {aboutItems.find(it => it.id === aboutActive)?.content}
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
         {selectedBadge ? (
           <div
             className={styles.modalOverlay}
@@ -694,36 +836,36 @@ export default function Profile() {
                 </button>
               </div>
               <div className={styles.modalBody}>
-                <label className={styles.modalImagePlaceholder}>
-                  {imagePreview ? (
-                    <img src={imagePreview} alt="Selected" className={styles.modalImagePreview} />
-                  ) : (
-                    <span className={styles.modalPlaceholderText}>Drag & Drop or Click to add</span>
-                  )}
-                  <input
-                    className={styles.modalFileInput}
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleFileSelect(e.target.files?.[0])}
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      const file = e.dataTransfer.files?.[0];
-                      handleFileSelect(file);
-                    }}
-                  />
-                </label>
+                <div className={styles.modalImageSection}>
+                  <label className={styles.modalImagePlaceholder}>
+                    {imagePreview ? (
+                      <img src={imagePreview} alt="Selected" className={styles.modalImagePreview} />
+                    ) : (
+                      <span className={styles.modalPlaceholderText}>Drag & Drop or Click to add</span>
+                    )}
+                    <input
+                      className={styles.modalFileInput}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileSelect(e.target.files?.[0])}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const file = e.dataTransfer.files?.[0];
+                        handleFileSelect(file);
+                      }}
+                    />
+                  </label>
 
-                {/* Paste textbox: users can right-click-copy images (e.g., from WhatsApp web) then paste into this smaller textarea below the image */}
-                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                  <textarea
-                    className={styles.modalPasteZone}
-                    placeholder={imagePreview ? 'Paste another image to replace current' : 'Paste images here from clipboard'}
-                    onPaste={(e) => handlePaste(e)}
-                    rows={1}
-                    aria-label="Paste images here from clipboard"
-                  />
-                  <div style={{ minWidth: 140 }} aria-live="polite">
+                  {/* Paste textbox: users can right-click-copy images (e.g., from WhatsApp web) then paste into this smaller textarea below the image */}
+                  <div className={styles.modalPasteSection}>
+                    <textarea
+                      className={styles.modalPasteZone}
+                      placeholder={imagePreview ? 'Paste another image to replace current' : 'Paste images here from clipboard'}
+                      onPaste={(e) => handlePaste(e)}
+                      rows={1}
+                      aria-label="Paste images here from clipboard"
+                    />
                     {pasteStatus ? (
                       <div className={styles.pasteStatus}>{pasteStatus}</div>
                     ) : null}
@@ -868,7 +1010,71 @@ export default function Profile() {
             </div>
           </div>
         ) : null}
-        <Footer poweredBy={footerContent.poweredBy} markers={footerContent.markers} />
+        {/* Signup Modal */}
+        {showSignupModal ? (
+          <div
+            className={styles.signupModalOverlay}
+            role="dialog"
+            aria-modal="true"
+            onClick={() => setShowSignupModal(false)}
+          >
+            <div className={styles.signupModalCard} onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                className={styles.signupModalClose}
+                onClick={() => setShowSignupModal(false)}
+                aria-label="Close"
+              >
+                ×
+              </button>
+              <div className={styles.signupModalContent}>
+                <h2 className={styles.signupModalTitle}>Sign Up</h2>
+                <div className={styles.signupForm}>
+                  <div className={styles.signupFormRow}>
+                    <label className={styles.signupFormLabel}>Name:</label>
+                    <input
+                      type="text"
+                      className={styles.signupFormInput}
+                      value={signupForm.name}
+                      onChange={(e) => setSignupForm({...signupForm, name: e.target.value})}
+                    />
+                  </div>
+                  <div className={styles.signupFormRow}>
+                    <label className={styles.signupFormLabel}>Email:</label>
+                    <input
+                      type="email"
+                      className={styles.signupFormInput}
+                      value={signupForm.email}
+                      onChange={(e) => setSignupForm({...signupForm, email: e.target.value})}
+                    />
+                  </div>
+                  <div className={styles.signupFormRow}>
+                    <label className={styles.signupFormLabel}>Phone Number:</label>
+                    <input
+                      type="tel"
+                      className={styles.signupFormInput}
+                      value={signupForm.phone}
+                      onChange={(e) => setSignupForm({...signupForm, phone: e.target.value})}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    className={styles.signupFormSave}
+                    onClick={() => {
+                      localStorage.setItem('isSignedUp', 'true');
+                      setIsSignedUp(true);
+                      setShowSignupModal(false);
+                      setShowSusDialog(false);
+                    }}
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
+        <Footer />
       </div>
     </div>
   );

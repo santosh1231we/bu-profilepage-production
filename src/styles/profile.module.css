@@ -14,7 +14,7 @@
   z-index: 0;
   pointer-events: none;
 }
-
+  
 .puzzleOverlay {
   position: fixed;
   inset: 0;
@@ -40,6 +40,15 @@
   clip-path: polygon(0 0, 14% 0, 46% 100%, 0 100%);
   z-index: 2;
   pointer-events: none;
+}
+
+.pinkOverlayLeaves {
+  position: absolute;
+  left: 0;
+  bottom: 0; /* at the bottom edge */
+  height: auto;
+  max-width: 320px; /* increased size slightly */
+  z-index: 3;
 }
 
 .content {
@@ -77,6 +86,14 @@
 
 .topBarLeft {
   flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.headerLogo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
 }
 
 .topBarRight {
@@ -92,12 +109,12 @@
 .headerProfileBtn {
   background: transparent;
   border: 0;
-  padding: 4px;
+  padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 56px; /* increased to match footer/section icons */
-  height: 56px;
+  width: 80px; /* even larger circle */
+  height: 80px;
   border-radius: 50%;
   cursor: pointer;
 }
@@ -112,12 +129,12 @@
 }
 
 .headerProfileImg {
-  width: 52px; /* match footer/section icon sizes */
-  height: 52px;
-  object-fit: contain;
+  width: 80px; /* larger to match button */
+  height: 80px;
+  object-fit: cover; /* cover to fill the circle */
   border-radius: 50%;
   display: block;
-  background: transparent; /* show the image as-is (no fill) */
+  background: transparent;
   border: none;
   box-shadow: none;
 }
@@ -221,6 +238,7 @@
   transform: translateY(-8px);
   transition: max-height 220ms ease, opacity 220ms ease, transform 220ms ease, margin-top 220ms ease;
   pointer-events: none;
+  position: relative;
 }
 
 .profileFormInner {
@@ -228,6 +246,48 @@
   padding: 22px 22px 18px;
   border-radius: 2px;
   box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.08);
+}
+
+/* How it works section with images as UI elements */
+.howItWorksContainer {
+  position: relative;
+  min-height: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: #0088cb;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.howItWorksTopImage,
+.howItWorksBottomImage {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.howItWorksTopImage {
+  /* First image at the top */
+}
+
+.howItWorksBottomImage {
+  /* Second image immediately below, no gap */
+  margin-top: 0;
+}
+
+.howItWorksContainer::-webkit-scrollbar {
+  width: 12px;
+}
+
+.howItWorksContainer::-webkit-scrollbar-thumb {
+  background: #ffffff;
+  border-radius: 10px;
+}
+
+.howItWorksContainer::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .formRow {
@@ -308,6 +368,9 @@
   font-size: 20px;
   font-weight: 700;
   cursor: pointer;
+  position: relative;
+  z-index: 10; /* ensure header row is above overlay */
+  pointer-events: auto;
 }
 
 .susRuleIcon {
@@ -357,9 +420,74 @@
 .susBadges {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 8px; /* reduced gap to bring badges closer for touch */
+  gap: 4px; /* reduced gap between badges */
   /* center items */
   justify-items: center;
+}
+
+/* About sustainability badges - diamond layout (3 top, 3 bottom staggered) */
+.aboutBadges {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  justify-items: center;
+  align-items: start;
+  padding: 30px 20px 60px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* First 3 items in top row */
+.aboutBadges > div:nth-child(1) { grid-column: 1; grid-row: 1; }
+.aboutBadges > div:nth-child(2) { grid-column: 2; grid-row: 1; }
+.aboutBadges > div:nth-child(3) { grid-column: 3; grid-row: 1; }
+
+/* Second row - items 4, 5, 6 positioned below */
+.aboutBadges > div:nth-child(4) { 
+  grid-column: 1; 
+  grid-row: 2;
+}
+.aboutBadges > div:nth-child(5) { 
+  grid-column: 2; 
+  grid-row: 2;
+}
+.aboutBadges > div:nth-child(6) { 
+  grid-column: 3; 
+  grid-row: 2;
+}
+
+.aboutBadgeWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.aboutBadge {
+  background: transparent !important;
+  position: relative;
+  overflow: visible;
+  border: none !important;
+  box-shadow: none !important;
+  width: clamp(140px, 18vw, 200px) !important;
+  height: auto !important;
+}
+
+.aboutBadge .susBadgeThumb {
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  height: 100%;
+}
+
+.aboutBadgeLabel {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
 }
 
 /* make the badges a bit larger for easier tapping */
@@ -486,32 +614,80 @@
   text-decoration: underline;
 }
 
-/* Signup backdrop and panel (replaces small signup chip) */
-.susSignupBackdrop {
+/* Red overlay for sustainability log signup */
+.susRedOverlayFull {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(27, 27, 27, 0.25); /* subtle dim over badges area */
-  z-index: 4;
+  background: rgba(214, 3, 102, 0.4); /* transparent red overlay */
+  z-index: 3;
+  pointer-events: none; /* allow clicks through to rulebook */
+}
+
+.susCardWithOverlay {
+  position: relative;
+}
+
+.susCardWithOverlay .susHeaderRow,
+.susCardWithOverlay .rulebookPanel {
+  position: relative;
+  z-index: 5; /* rulebook above overlay */
   pointer-events: auto;
 }
 
-.susSignupPanel {
-  width: min(920px, 90%);
-  max-width: 920px;
-  background: linear-gradient(180deg, rgba(214,3,102,0.92), rgba(214,3,102,0.80));
-  border-radius: 18px;
-  padding: 18px 28px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
-  border: 6px solid rgba(255, 255, 255, 0.92);
+.susCardWithOverlay .susBadgesWrapper {
   position: relative;
+  z-index: 1; /* badges below overlay */
+  pointer-events: none; /* make badges non-clickable */
+}
+
+.susRedOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 70%; /* increased height */
+  background: rgba(214, 3, 102, 0.5); /* transparent red */
+  border-radius: 0; /* sharp edges */
+  z-index: 4;
+  pointer-events: none;
+  /* Positioned to cover approximately half of the outer circles */
+}
+
+.susRedPanel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(600px, 75%);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  animation: susSignupEnter 260ms cubic-bezier(.2,.9,.2,1);
-  min-height: 120px;
+  z-index: 5;
+  pointer-events: auto;
+  padding: 30px;
+}
+
+.susRedPanelButton {
+  background: #ffffff;
+  color: #c30673;
+  border: 4px solid #ffffff;
+  border-radius: 36px;
+  padding: 16px 32px;
+  font-size: clamp(16px, 2vw, 22px);
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  white-space: normal;
+  max-width: 100%;
+}
+
+.susRedPanelButton:hover {
+  background: #f0f0f0;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
 }
 
 .susSignupInner {
@@ -655,6 +831,9 @@
   transform: translateY(-6px);
   transition: max-height 250ms ease, opacity 250ms ease, transform 250ms ease;
   overflow: hidden;
+  position: relative;
+  z-index: 10; /* ensure rulebook is always above overlay */
+  pointer-events: auto;
 }
 
 .rulebookContent {
@@ -849,6 +1028,18 @@
   min-height: 0;
 }
 
+.modalImageSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modalPasteSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .modalImagePlaceholder {
   background: linear-gradient(180deg, #cde9ff 0%, #8bc6ff 60%, #6f9b3c 100%);
   border: 6px solid #ffffff;
@@ -887,7 +1078,6 @@
 
 /* Small paste zone placed below the image upload; unobtrusive */
 .modalPasteZone {
-  margin-top: 8px;
   width: 100%;
   min-height: 36px; /* smaller, unobtrusive */
   border-radius: 6px;
@@ -1150,6 +1340,7 @@
   right: 0;
   bottom: 0;
   z-index: 5;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3); /* glow effect on top edge */
 }
 
 .poweredBy {
@@ -1198,3 +1389,218 @@
   }
 }
 
+/* About sustainability popup modal - fixed overlay like modalOverlay */
+.aboutPopupWrapper {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 40;
+  pointer-events: auto;
+}
+
+.aboutPopupCard {
+  width: min(980px, 92%);
+  max-height: 84vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 6px solid #f6b042; /* orange border like the image */
+  border-radius: 6px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+  position: relative;
+}
+
+.aboutPopupCard::-webkit-scrollbar {
+  width: 12px;
+}
+
+.aboutPopupCard::-webkit-scrollbar-thumb {
+  background: rgba(246, 176, 66, 0.4);
+  border-radius: 10px;
+}
+
+.aboutPopupInner {
+  padding: 56px 64px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.aboutPopupLogo {
+  max-width: 300px;
+  width: 100%;
+  height: auto;
+  margin-bottom: 8px;
+}
+
+.aboutPopupTitle {
+  font-weight: 800;
+  font-size: clamp(22px, 2.6vw, 34px);
+  color: #e67e22; /* orange text */
+  margin: 0;
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+.aboutPopupText {
+  color: #e67e22; /* orange text */
+  font-size: 18px;
+  line-height: 1.7;
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+.aboutPopupLink {
+  color: #0071b4; /* blue links */
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.aboutPopupLink:hover {
+  color: #005a8f;
+}
+
+.aboutPopupClose {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 3px solid #f6b042;
+  background: #f6b042; /* orange background */
+  color: #ffffff; /* white X icon */
+  font-weight: 700;
+  font-size: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.aboutPopupClose:hover {
+  background: #e67e22; /* darker orange on hover */
+  border-color: #e67e22;
+  transform: scale(1.1);
+}
+
+.aboutPopupHeart {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  color: #c30673; /* magenta heart */
+  font-size: 28px;
+  line-height: 1;
+}
+
+/* Signup Modal */
+.signupModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.signupModalCard {
+  background: #0088cb;
+  border-radius: 8px;
+  padding: 32px 40px;
+  width: min(600px, 90%);
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  border: 2px solid #61ab3c;
+}
+
+.signupModalClose {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  background: transparent;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signupModalClose:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.signupModalContent {
+  padding-top: 12px;
+}
+
+.signupModalTitle {
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 24px;
+  text-align: center;
+}
+
+.signupForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.signupFormRow {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.signupFormLabel {
+  background: #e5007e;
+  color: #ffffff;
+  padding: 10px 16px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 2px;
+  text-align: left;
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+.signupFormInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 2px;
+  font-size: 16px;
+  background: #ffffff;
+  color: #1b3b63;
+  font-family: inherit;
+}
+
+.signupFormSave {
+  background: #61ab3c;
+  color: #ffffff;
+  border: 3px solid #ffffff;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 12px;
+  align-self: flex-end;
+}
+
+.signupFormSave:hover {
+  background: #5a9a35;
+  transform: translateY(-1px);
+}

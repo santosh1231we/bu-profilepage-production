@@ -1,11 +1,19 @@
 @font-face {
-  font-family: 'Squeeze';
-  src: url('../../fonts/Squeeze.ttf') format('truetype');
-  font-weight: 400 800;
-  font-style: normal;
+  font-family: 'Barlow Condensed';
+  src: url('../../fonts/BarlowCondensed-BoldItalic.ttf') format('truetype');
+  font-style: italic;   /* match the font file */
+  font-weight: bold;    /* match the font file */
   font-display: swap;
 }
 
+h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 137px;
+  letter-spacing: -2px!important;
+  transform: scaleY(1.4); 
+  display: inline-block; 
+  margin-bottom: 20px; 
+}
 :root {
   font-family: 'Georgia', 'Times New Roman', serif;
   color: #ffffff;

@@ -1,20 +1,32 @@
 import styles from '@styles/profile.module.css';
 
-export default function Hero({ title, headerLeft, headerRight, profileIcon, onProfileToggle }) {
+export default function Hero({ title, headerLeft, headerRight, profileIcon, logoIcon, onProfileToggle, onSignupClick, isSignedUp }) {
   return (
     <header className={styles.hero}>
       <div className={styles.topBar}>
-        <span className={styles.topBarLeft}>{headerLeft}</span>
+        <span className={styles.topBarLeft}>
+          {logoIcon ? (
+            <img src={logoIcon} alt="Building-U Logo" className={styles.headerLogo} />
+          ) : (
+            headerLeft
+          )}
+        </span>
         <span className={styles.topBarRight}>
           {profileIcon ? (
             <button
               type="button"
               className={styles.headerProfileBtn}
-              onClick={() => onProfileToggle && onProfileToggle('profile')}
-              aria-label="Open My building-U Profile"
-              title="Open My building-U Profile"
+              onClick={() => {
+                if (isSignedUp) {
+                  onProfileToggle && onProfileToggle('profile');
+                } else {
+                  onSignupClick && onSignupClick();
+                }
+              }}
+              aria-label={isSignedUp ? "Open My building-U Profile" : "Sign Up"}
+              title={isSignedUp ? "Open My building-U Profile" : "Sign Up"}
             >
-              <img src={profileIcon} alt="Profile" className={styles.headerProfileImg} />
+              <img src={profileIcon} alt={isSignedUp ? "Profile" : "Sign Up"} className={styles.headerProfileImg} />
             </button>
           ) : null}
           {headerRight}

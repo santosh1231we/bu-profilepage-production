@@ -1,6 +1,5 @@
-// TODO: replace with backend-provided data
 export const heroContent = {
-  title: 'MY BUILDING-U',
+  title: 'MY Building-U',
   subtitle: 'RENEW is the NEW NEW',
   headerLeft: 'Building-U Logo',
   headerRight: ''
@@ -21,13 +20,18 @@ const sustainabilityIcon = new URL(
   import.meta.url
 ).href;
 
-// TODO: replace with backend-provided data
 export const sectionItems = [
   {
     id: 'profile',
-    label: 'My building-U Profile',
+    label: 'About sustainability',
     icon: profileIcon,
-    iconAlt: 'Profile'
+    iconAlt: 'About'
+  },
+  {
+    id: 'how',
+    label: 'How does it work?',
+    icon: profileIcon,
+    iconAlt: 'How'
   },
   {
     id: 'sustainability',
@@ -37,12 +41,6 @@ export const sectionItems = [
   }
 ];
 
-// TODO: replace with backend-provided data
-const adsenseLogo = new URL('../../assets/Plede-a-thon campaign page/logo/adsense-logo.png', import.meta.url).href;
-
-export const footerContent = {
-  poweredBy: 'Powered by:',
-  // only 3 markers; the middle one shows the AdSense logo
-  markers: [null, adsenseLogo, null]
-};
+// Footer markers were consolidated into the Footer component to use local assets directly.
+// Keeping this file focused on page-level content (hero and section definitions).
 
